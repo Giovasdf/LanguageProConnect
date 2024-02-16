@@ -3,8 +3,9 @@
     public class School
     {
         public Guid Id { get; set; }
-        public string SchoolName { get; set; }
-        public string CountryOfSchool { get; set; }
-        public string CityOfSchool { get; set; }
+        public string Name { get; set; }
+        public string Country{ get; set; }
+        public string City { get; set; }
+
     }
 }
