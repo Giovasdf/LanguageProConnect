@@ -11,5 +11,6 @@ namespace LanguageProConnect.Data
 
         public DbSet<Vendor> Vendors { get; set; }
         public DbSet<School> Schools { get; set; }
+        public DbSet<LanguageSpoken> LanguageSpokens { get;set; }
     }
 }
