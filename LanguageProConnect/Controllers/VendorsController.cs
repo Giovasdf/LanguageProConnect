@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LanguageProConnect.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageProConnect.Controllers
 {
@@ -6,9 +7,14 @@ namespace LanguageProConnect.Controllers
     [Route("api/[controller]")]
     public class VendorsController : Controller
     {
-        public IActionResult Index()
+        private readonly VendorsDbContext dbContext;
+        public VendorsController(VendorsDbContext dbContext) { 
+            this.dbContext = dbContext;
+        }
+        [HttpGet]
+        public IActionResult GetAllVendors()
         {
-            return View();
+            return Ok(dbContext.Vendors.ToList());
         }
     }
 }
