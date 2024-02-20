@@ -10,14 +10,33 @@ namespace LanguageProConnect.Controllers
     public class VendorsController : Controller
     {
         private readonly VendorsDbContext dbContext;
-        public VendorsController(VendorsDbContext dbContext) { 
+        public VendorsController(VendorsDbContext dbContext)
+        {
             this.dbContext = dbContext;
         }
         [HttpGet]
         public async Task<IActionResult> GetAllVendors()
         {
-            return Ok(await dbContext.Vendors.ToListAsync());
+            // Selecciona todas las propiedades excepto Password
+            var vendors = await dbContext.Vendors
+                .Select(vendor => new
+                {
+                    vendor.Id,
+                    vendor.Name,
+                    vendor.Description,
+                    vendor.CountryOfVendor,
+                    vendor.Email,
+                    vendor.Phone,
+                    vendor.LanguagesSpokenId,
+                    vendor.SchoolId,
+                    vendor.LanguagesSpoken,
+                    vendor.School
+                })
+                .ToListAsync();
+
+            return Ok(vendors);
         }
+    
 
         [HttpPost]
         public async Task<IActionResult> AddVendor(AddVendorRequest addVendorRequest)
@@ -65,6 +84,78 @@ namespace LanguageProConnect.Controllers
             await dbContext.SaveChangesAsync();
             return Ok(vendor);
         }
+
+        [HttpPut]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> UpdateVendor([FromRoute] Guid id, UpdateVendorRequest updateVendorRequest)
+        {
+            var existingVendor = await dbContext.Vendors.FindAsync(id);
+
+            if (existingVendor == null)
+            {
+                return NotFound();
+            }
+
+            existingVendor.Name = updateVendorRequest.Name;
+            existingVendor.Description = updateVendorRequest.Description;
+            existingVendor.CountryOfVendor = updateVendorRequest.CountryOfVendor;
+            existingVendor.Email = updateVendorRequest.Email;
+            existingVendor.Phone = updateVendorRequest.Phone;
+            //existingVendor.Password = updateVendorRequest.Password;
+
+            var languagesSpoken = await dbContext.LanguageSpokens.FindAsync(updateVendorRequest.LanguagesSpoken.Id);
+            if (languagesSpoken == null)
+            {
+                languagesSpoken = new LanguageSpoken
+                {
+                    Id = updateVendorRequest.LanguagesSpoken.Id,
+                    Name = updateVendorRequest.LanguagesSpoken.Name
+                };
+                dbContext.LanguageSpokens.Add(languagesSpoken);
+            }
+            existingVendor.LanguagesSpoken = languagesSpoken;
+
+            var school = await dbContext.Schools.FindAsync(updateVendorRequest.School.Id);
+            if (school == null)
+            {
+                school = new School
+                {
+                    Id = updateVendorRequest.School.Id,
+                    Name = updateVendorRequest.School.Name,
+                    Country = updateVendorRequest.School.Country,
+                    City = updateVendorRequest.School.City
+                };
+                dbContext.Schools.Add(school);
+            }
+            existingVendor.School = school;
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(existingVendor);
+        }
+
+
+
+
+        [HttpDelete]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> DeleteVendor([FromRoute] Guid id)
+        {
+            // Buscar el proveedor en la base de datos
+            var existingVendor = await dbContext.Vendors.FindAsync(id);
+
+            if (existingVendor == null)
+            {
+                return NotFound(); // El proveedor no existe
+            }
+
+            // Eliminar el proveedor de la base de datos
+            dbContext.Vendors.Remove(existingVendor);
+            await dbContext.SaveChangesAsync();
+
+            return NoContent(); // Devolver una respuesta exitosa sin contenido
+        }
+
 
     }
 }

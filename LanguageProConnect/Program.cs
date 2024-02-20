@@ -24,6 +24,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors(builder =>
+{
+    builder.AllowAnyOrigin()
+           .AllowAnyMethod()
+           .AllowAnyHeader();
+});
 
 app.UseHttpsRedirection();
 
@@ -53,9 +59,9 @@ static void SeedData(VendorsDbContext dbContext)
 
     // Seed Schools
     dbContext.Schools.AddRange(
-        new School { Id = Guid.NewGuid(), Name = "Ned", Country = "Ireland", City = "Limerick" },
-        new School { Id = Guid.NewGuid(), Name = "Student Campus", Country = "Ireland", City = "Limerick" },
-        new School { Id = Guid.NewGuid(), Name = "ELI", Country = "Ireland", City = "Limerick" }
+        new School { Id = Guid.NewGuid(), Name = "School Ireland", Country = "Ireland", City = "Limerick" },
+        new School { Id = Guid.NewGuid(), Name = "Santiago Campus", Country = "Chile", City = "Santiago" },
+        new School { Id = Guid.NewGuid(), Name = "Toronto College", Country = "Canada", City = "Toronto" }
     );
 
     dbContext.SaveChanges();
