@@ -28,7 +28,7 @@ Ensure to replace dbContext with your actual database context variable.
 ###Database Context
 In the database context file, make sure to update the connection string to reflect your database setup. Additionally, you can modify the seeding logic according to your requirements.
 
-###Run the Application
+### Run the Application
 Once the database setup and seeding are complete, you can run the application to start using the API.
 ```bash
 dotnet run
